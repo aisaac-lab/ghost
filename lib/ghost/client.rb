@@ -1,5 +1,6 @@
 require 'csv'
 require 'woothee'
+require 'colorize'
 
 module Ghost
   class Client
@@ -9,7 +10,7 @@ module Ghost
       else
         user_agent
       end
-      puts "UA: #{agent_name}"
+      logging 'UA', agent_name
 
       @client = if proxy.empty?
         HTTPClient.new(agent_name: agent_name)
@@ -31,7 +32,7 @@ module Ghost
         try += 1
         get_res(url, need_redirect)
       rescue => ex
-        puts "Failure #{try} #{ex.message}"
+        logging 'Fail' "#{try} #{ex.message}"
         sleep try ** 3 * 10
         retry if try < max_try_count
         raise ex
@@ -39,12 +40,12 @@ module Ghost
     end
 
     private def get_res(url, need_redirect)
-      puts "GET #{url}..."
+      logging 'GET', url
       res = @client.get(url)
       if res.redirect?
-        puts 'redirecting...'
+        logging 'redirecting...', ''
         if need_redirect
-          puts 'need_redirect...'
+          logging 'need_redirect...', ''
           url2 = res.headers['location'] || res.headers['Location']
           unless url2.match(/http/)
             if url2.match(%r|\A/|)
@@ -54,7 +55,7 @@ module Ghost
             end
           end
 
-          puts "GET #{url2}..."
+          logging 'GET', url2
           res2 = @client.get(url2)
           res2
         else
@@ -63,6 +64,13 @@ module Ghost
       else
         res
       end
+    end
+
+    private def logging(label, body)
+      label_colored = "[#{label}]".colorize(:green)
+      body_colored = "[#{body}]".colorize(:light_red)
+
+      puts "#{label_colored}#{body_colored} #{Time.now.strftime('%m/%d %H:%M:%S')}"
     end
   end
 end

@@ -28,4 +28,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.add_dependency 'httpclient', '2.8.3'
   spec.add_dependency 'woothee'
+  spec.add_dependency 'colorize'
 end
