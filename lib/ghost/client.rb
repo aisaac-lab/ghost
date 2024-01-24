@@ -32,7 +32,7 @@ module Ghost
         try += 1
         get_res(url, need_redirect)
       rescue => ex
-        logging 'Fail' "#{try} #{ex.message}"
+        logging 'Fail', "#{try} #{ex.message}"
         sleep try ** 3 * 10
         retry if try < max_try_count
         raise ex
