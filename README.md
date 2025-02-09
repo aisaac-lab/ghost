@@ -9,3 +9,8 @@ export PASS=20kdmhrmhen6
 
 bundle exec rspec
 ```
+
+
+```rb
+puts User.where('? < last_access_at', 1.month.ago).group(:last_user_agent).count.reject { |k, _| k.match?(/CFNetwork/) || k.match?(/okhttp/) }.inspect
+```
